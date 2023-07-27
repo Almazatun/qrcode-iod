@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>🤖 QR IOD Document</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+    <style>
+        body {
+            font-family: sans-serif;
+            background-color: rgba(133, 223, 223, 0.808);
+        }
+
+        .main_content {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .content {
+            height: 70vh;
+            width: 70vw;
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+        }
+
+        .content_left {
+            background-color: aliceblue;
+            width: 50%;
+            height: 70%;
+            border-radius: 10px;
+            box-shadow: 0px -5px 10px 0px rgba(0, 0, 0, 0.5);
+            padding: 10px 10px;
+            margin-right: 20px;
+        }
+
+        .content_left > form {
+            
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content_form_input {
+            display: flex;
+            flex-direction: column;
+            margin: 10px 0;
+        }
+
+        .content_form_input > label {
+            margin: 0, 0, 10px, 0;
+        }
+
+        .content_right {
+            width: 50%;
+            height: 70%;
+            border-radius: 10px;
+            box-shadow: 0px -5px 10px 0px rgba(0, 0, 0, 0.5);
+            background-color: aliceblue;
+            padding: 10px 10px;
+        }
+
+        .content_form_input_imgage > img {
+            width: 300px;
+            height: 300px;
+        }
+
+        .submit_btn {
+            margin-top: 10px;
+        }
+
+        .content_right {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .content_right_qrcode > img {
+            width: 350px;
+            height: 350px;
+        }
+    </style>
+    <div class="main_content">
+        <div>
+            <h1>🤖 QE IOD</h1>
+        </div>
+        <div class="content">
+            <div class="content_left">
+            <form id="form">
+                    <div class="content_form_input">
+                        <label for="url">Please enter website URL</label>
+                        <input type="text" name="url" required>
+                    </div>
+                    <div class="submit_btn">
+                        <button type="button"  onclick="submitForm()">Submit</button>
+                    </div>
+            </form>
+            <!-- Area to display error messages -->
+            <div id="error-area"></div>
+            </div>
+            <div class="content_right">
+                <h2> Your QR code here</h2>
+                <div class="content_right_qrcode">
+                    <img id="image-preview" src="#">
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+         async function submitForm() {
+            const form = document.getElementById("form");
+            const formData = new FormData(form);
+
+            try {
+                // Make a POST request to the server to get the image preview
+                const response = await fetch('http://localhost:3000/qrcode', {
+                method: 'POST',
+                headers: { 
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({"url": String(formData.get('url'))}),
+                });
+
+                if(response.ok) {
+                    // Get the response data as JSON
+                    const data = await response.json();
+
+                    // Decode the base64 image data
+                    const imageBase64 = data.image;
+                    const decodedImage = atob(imageBase64);
+
+                    // Create a Blob object from the decoded image data
+                    const blob = new Blob([new Uint8Array(decodedImage.split('').map(char => char.charCodeAt(0)))], { type: "image/*" });
+
+                    // Display the image preview area
+                    const imagePreview = document.getElementById("image-preview");
+                    imagePreview.src = URL.createObjectURL(blob);
+                    imagePreview.style.display = "block";
+                } else {
+                    const data = await response.json()
+                    showError({ message: data.message });
+                }
+            } catch (errors) {
+                showError({ message: "An error occurred while processing the request." });
+            }
+         }
+
+         function showError(errorData) {
+            const errorArea = document.getElementById("error-area");
+            errorArea.innerHTML = `<p style="color: red;">Error: ${errorData.message}</p>`;
+
+            setTimeout(() => {
+                errorArea.innerHTML = ''
+            }, 3000)
+        }
+    </script>
+</body>
+</html>
