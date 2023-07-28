@@ -6,7 +6,6 @@ import (
 	"net/url"
 
 	"github.com/Almazatun/qrcode-iod/pkg/common"
-	"github.com/Almazatun/qrcode-iod/pkg/common/helper"
 	"github.com/Almazatun/qrcode-iod/pkg/common/input"
 	"github.com/gofiber/fiber/v2"
 	"github.com/yeqown/go-qrcode/v2"
@@ -57,7 +56,7 @@ func (qr *QRCodeHandlerInstance) Create(c *fiber.Ctx) error {
 		return nil
 	}
 
-	fileName := helper.RandomString(32) + ".png"
+	// fileName := helper.RandomString(32) + ".png"
 	// dir := "assets/qrode_imgs/"
 
 	// get bytes
@@ -80,8 +79,8 @@ func (qr *QRCodeHandlerInstance) Create(c *fiber.Ctx) error {
 	imageBase64 := base64.StdEncoding.EncodeToString(buf.Bytes())
 
 	return c.Status(200).JSON(fiber.Map{
-		"image":    imageBase64,
-		"filename": fileName,
+		"image": imageBase64,
+		// "filename": fileName,
 	})
 
 }

@@ -9,14 +9,14 @@ git clone https://github.com/Almazatun/qrcode-iod.git
 # Enter into the directory
 cd qrcode-iod/
 # Install the dependencies
-go mod download | go mod tidy | make install
+make install
 ```
 
-### Build app
+### Build web app
 ```bash
-$ make build
+$ make build_web
 ```
-### Run app
+### Run web app 
 ```bash
-$ make run
+$ make run_web
 ```
